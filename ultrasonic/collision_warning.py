@@ -32,6 +32,7 @@ def setup():
     Widgets.setRotation(1)
     Widgets.fillScreen(0x000000)
     Widgets.setBrightness(160)
+    Speaker.setVolumePercentage(100)
 
     label_title = Widgets.Label("Distance Sensor", 45, 15, 1.0, 0xFFFFFF, 0x000000, Widgets.FONTS.Montserrat18)
     label_distance = Widgets.Label("Dist: -- cm", 45, 55, 1.4, 0x00FFFF, 0x000000, Widgets.FONTS.Montserrat18)
@@ -62,12 +63,25 @@ def loop():
         last_update_time = current_time
         distance = ultrasonic_0.get_target_distance()
 
-        if distance > 0 and distance < 7958:
+        if distance > 3000:
+            print("Safe. Distance: {} mm" .format(distance))
             label_distance.setText("Dist: {:.1f} mm" .format(distance))
             label_status.setText("Object Detected")
+        elif distance > 2000 and distance <= 3000:
+            print("Warning. Distance: {} mm" .format(distance))
+            label_distance.setText("Dist: {:.1f} mm" .format(distance))
+            label_status.setText("Object Detected")
+            Speaker.tone(2000, 200)
+        elif distance > 1000 and distance <= 2000:
+            print("Alert. Distance: {} mm" .format(distance))
+            label_distance.setText("Dist: {:.1f} mm" .format(distance))
+            label_status.setText("Object Detected")
+            Speaker.tone(2000, 50)
         else:
-            label_distance.setText("Dist: -- mm")
-            label_status.setText("Out of Range")
+            print("Danger. Distance: {} mm" .format(distance))
+            label_distance.setText("Dist: {:.1f} mm" .format(distance))
+            label_status.setText("Object Detected")
+            Speaker.tone(2000, 1000)
 
     time.sleep_ms(20)
 
